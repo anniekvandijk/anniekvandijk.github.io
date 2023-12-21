@@ -33,6 +33,6 @@ If not, just do a new commit to your Jekyll repository and it will trigger the n
  ---
  - [*About GitHub Pages and Jekyll*](https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll/about-github-pages-and-jekyll) 
  - [*Jemoji Github repository*](https://github.com/jekyll/jemoji)
- - [*Emoji Cheat Sheet*](http://www.iemoji.com/emoji-cheat-sheet/all)
+ - [*Emoji Cheat Sheet*](https://www.iemoji.com/emoji-cheat-sheet/all)
 
 
