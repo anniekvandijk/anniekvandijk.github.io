@@ -299,7 +299,9 @@
                     <div class="analog-center"></div>
                 </div>
                 <div class="clock-display" id="clockDisplay">08:00</div>
+                <div class="status" id="simSpeedDisplay"></div>
             </div>
+            
             <div class="status" id="clockStatus">Stopped</div>
             <div class="button-group">
                 <button onclick="startClock()">Start Clock</button>
@@ -346,8 +348,13 @@
         let dayCounter = 1;
         
         // Initialize display
-        updateClockDisplay();
-        updateDateDisplay();
+    updateClockDisplay();
+    updateDateDisplay();
+    updateSimSpeedDisplay();
+        function updateSimSpeedDisplay() {
+            const simSpeed = typeof SIM_SPEED !== 'undefined' ? SIM_SPEED : 8;
+            document.getElementById('simSpeedDisplay').textContent = `1 second real time = ${simSpeed} seconds game time`;
+        }
         
         function startClock() {
             if (!clockRunning) {
@@ -356,6 +363,7 @@
                 clockInterval = setInterval(updateClock, 100); // smooth updates for second hand
                 document.getElementById('clockStatus').textContent = 'Running';
                 document.getElementById('clockStatus').className = 'status running';
+                updateSimSpeedDisplay();
             }
         }
         
@@ -373,6 +381,7 @@
             simulatedTimeMs = 8 * 60 * 60 * 1000;
             updateClockDisplay();
             updateAnalogClock();
+            updateSimSpeedDisplay();
         }
         
         function setClockTime() {
