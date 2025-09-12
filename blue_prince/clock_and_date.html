@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blue Prince Date & Time</title>
+    <style>
+        :root {
+            --time-font-size: 3.2em;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px;
+            background: radial-gradient(1200px 800px at 20% 10%, #1e2a48 0%, #0f172a 35%, #0b1220 80%);
+            color: #e6f0ff;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: rgba(10, 16, 32, 0.6);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.4em;
+            letter-spacing: 0.04em;
+            color: #a7c7ff;
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.2), 0 0 30px rgba(15, 23, 42, 0.8);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #9ac5ff;
+            opacity: 0.9;
+            margin-bottom: 24px;
+        }
+        
+        .clock-section, .date-section {
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 22px;
+            margin: 10px 0;
+            border: 1px solid rgba(99, 102, 241, 0.18);
+        }
+
+        .two-col {
+            display: flex;
+            gap: 18px;
+            align-items: stretch;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .two-col > div {
+            flex: 1 1 460px;
+            min-width: 340px;
+        }
+        
+        .clock-visuals {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .clock-display {
+            font-size: var(--time-font-size);
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px 28px;
+            border-radius: 10px;
+            min-width: 220px;
+        }
+
+        .analog-clock {
+            position: relative;
+            width: 240px;
+            height: 240px;
+            border: 10px solid #dbe8ff;
+            border-radius: 50%;
+            /* Clean, elegant face */
+            background: radial-gradient(circle at 50% 50%, #ffffff 0%, #f1f6ff 70%, #e6efff 100%);
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.08), 0 8px 20px rgba(4, 120, 180, 0.18);
+        }
+
+        .analog-center {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: #0f172a;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            box-shadow: 0 0 0 2px #bcd6ff, 0 0 8px rgba(28, 78, 216, 0.35);
+        }
+
+        .hand {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform-origin: 50% 100%;
+            transform: translate(-50%, -100%) rotate(0deg);
+            /* Inked outline look */
+            box-shadow: 0 0 0 2px rgba(12, 18, 36, 0.6);
+        }
+
+        .hand.hour {
+            width: 10px;
+            height: 70px;
+            background: linear-gradient(#0b1220, #16213a);
+            border-radius: 6px;
+            z-index: 5;
+            filter: drop-shadow(0 1px 0 rgba(0,0,0,0.3));
+        }
+
+        .hand.minute {
+            width: 6px;
+            height: 95px;
+            background: linear-gradient(#0b1220, #1b2a4a);
+            border-radius: 6px;
+            z-index: 6;
+            filter: drop-shadow(0 1px 0 rgba(0,0,0,0.3));
+        }
+
+        /* removed second hand for HH:MM-only display */
+
+        .tick { display: none; }
+
+        .tick.major {
+            display: block;
+            position: absolute;
+            left: 50%;
+            top: 12px;
+            transform-origin: 50% 108px;
+            width: 3px;
+            height: 14px;
+            border-radius: 2px;
+            opacity: 0.9;
+            background: #0b1220;
+            box-shadow: 0 0 0 1px rgba(12, 18, 36, 0.25);
+        }
+
+        .analog-clock::after { content: ""; position: absolute; inset: 0; border-radius: 50%; pointer-events: none; }
+        }
+        
+        .dot {
+            position: absolute;
+            left: 50%;
+            top: 16px;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #1b2a4a;
+            opacity: 0.7;
+            transform-origin: 50% 104px;
+            box-shadow: 0 0 0 1px rgba(12, 18, 36, 0.15);
+        }
+        
+        .date-display {
+            font-size: var(--time-font-size);
+            text-align: center;
+            margin: 16px 0 10px 0;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            color: #d8e8ff;
+            text-shadow: 0 0 8px rgba(56, 189, 248, 0.15);
+            background: linear-gradient(180deg, rgba(13, 23, 48, 0.35), rgba(13, 23, 48, 0.15));
+            padding: 18px 20px;
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            border-radius: 12px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #2563eb, #06b6d4);
+            border: none;
+            color: #f0f7ff;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(3, 105, 161, 0.35);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(56, 189, 248, 0.35);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        input[type="number"] {
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            width: 100px;
+        }
+        
+        .day-counter {
+            font-size: 1.2em;
+            text-align: center;
+            margin: 6px 0 16px 0;
+            background: rgba(0, 0, 0, 0.15);
+            padding: 10px 12px;
+            border-radius: 10px;
+            color: #b8cff9;
+        }
+        
+        .status {
+            text-align: center;
+            margin: 15px 0;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .running {
+            color: #2ecc71;
+        }
+        
+        .stopped {
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Blue Prince — Date & Time</h1>
+        <div class="subtitle">Inspired by the atmosphere of Mt. Holly</div>
+
+        <div class="two-col">
+        <!-- Clock Section -->
+        <div class="clock-section">
+            <h2>Clock</h2>
+            <div class="clock-visuals">
+                <div class="analog-clock" id="analogClock">
+                    <div class="hand hour" id="hourHand"></div>
+                    <div class="hand minute" id="minuteHand"></div>
+                    <div class="analog-center"></div>
+                </div>
+                <div class="clock-display" id="clockDisplay">08:00</div>
+            </div>
+            <div class="status" id="clockStatus">Stopped</div>
+            <div class="button-group">
+                <button onclick="startClock()">Start Clock</button>
+                <button onclick="stopClock()">Stop Clock</button>
+                <button onclick="resetClock()">Reset Clock</button>
+            </div>
+            <div class="input-group">
+                <label for="hourInput">Hour:</label>
+                <input type="number" id="hourInput" min="0" max="23" value="8">
+                <label for="minuteInput">Minute:</label>
+                <input type="number" id="minuteInput" min="0" max="59" value="0">
+                <button onclick="setClockTime()">Set Time</button>
+            </div>
+        </div>
+        
+        <!-- Date Section -->
+        <div class="date-section">
+            <h2>Date</h2>
+            <div class="date-display" id="dateDisplay">November 7, 2024</div>
+            <div class="day-counter" id="dayCounter">Day 1</div>
+            <div class="button-group">
+                <button onclick="advanceDate()">Next Day</button>
+            </div>
+            <div class="input-group">
+                <label for="dayInput">Enter day number:</label>
+                <input type="number" id="dayInput" min="1" value="1">
+                <button onclick="calculateDate()">Calculate Date</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script>
+        // Clock variables (simulation: 1 hour passes in 8 real minutes = 7.5x speed)
+        let clockInterval;
+        let clockRunning = false;
+        const SIM_SPEED = 7.5; // simulated seconds per real second
+        const DAY_MS = 24 * 60 * 60 * 1000;
+        let simulatedTimeMs = 8 * 60 * 60 * 1000; // start at 08:00:00
+        let lastRealTs = Date.now();
+        
+        // Date variables
+        let currentDate = new Date(2024, 10, 7); // November 7, 2024 (month is 0-indexed)
+        let dayCounter = 1;
+        
+        // Initialize display
+        updateClockDisplay();
+        updateDateDisplay();
+        
+        function startClock() {
+            if (!clockRunning) {
+                clockRunning = true;
+                lastRealTs = Date.now();
+                clockInterval = setInterval(updateClock, 100); // smooth updates for second hand
+                document.getElementById('clockStatus').textContent = 'Running';
+                document.getElementById('clockStatus').className = 'status running';
+            }
+        }
+        
+        function stopClock() {
+            if (clockRunning) {
+                clockRunning = false;
+                clearInterval(clockInterval);
+                document.getElementById('clockStatus').textContent = 'Stopped';
+                document.getElementById('clockStatus').className = 'status stopped';
+            }
+        }
+        
+        function resetClock() {
+            stopClock();
+            simulatedTimeMs = 8 * 60 * 60 * 1000;
+            updateClockDisplay();
+            updateAnalogClock();
+        }
+        
+        function setClockTime() {
+            const hourInput = document.getElementById('hourInput');
+            const minuteInput = document.getElementById('minuteInput');
+            const hours = parseInt(hourInput.value);
+            const minutes = parseInt(minuteInput.value);
+            
+            if (hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59) {
+                simulatedTimeMs = ((hours * 60 + minutes) * 60) * 1000;
+                updateClockDisplay();
+                updateAnalogClock();
+            } else {
+                alert('Please enter valid time values (Hours: 0-23, Minutes: 0-59)');
+            }
+        }
+        
+        function updateClock() {
+            if (!clockRunning) return;
+            const now = Date.now();
+            const realDeltaMs = now - lastRealTs;
+            lastRealTs = now;
+            const simDeltaMs = realDeltaMs * SIM_SPEED;
+            simulatedTimeMs = (simulatedTimeMs + simDeltaMs) % DAY_MS;
+            updateClockDisplay();
+            updateAnalogClock();
+        }
+        
+        function parseHmsFromSimMs() {
+            const totalSeconds = Math.floor(simulatedTimeMs / 1000);
+            const totalMinutes = Math.floor(totalSeconds / 60);
+            const minutes = totalMinutes % 60;
+            const hours = Math.floor(totalMinutes / 60) % 24;
+            return { hours, minutes };
+        }
+
+        function updateClockDisplay() {
+            const { hours, minutes } = parseHmsFromSimMs();
+            const h = hours.toString().padStart(2, '0');
+            const m = minutes.toString().padStart(2, '0');
+            document.getElementById('clockDisplay').textContent = `${h}:${m}`;
+        }
+
+        function updateAnalogClock() {
+            const { hours, minutes } = parseHmsFromSimMs();
+            const hourDeg = (hours % 12) * 30 + minutes * 0.5;
+            const minuteDeg = minutes * 6;
+            const hourHand = document.getElementById('hourHand');
+            const minuteHand = document.getElementById('minuteHand');
+            if (hourHand) hourHand.style.transform = `translate(-50%, -100%) rotate(${hourDeg}deg)`;
+            if (minuteHand) minuteHand.style.transform = `translate(-50%, -100%) rotate(${minuteDeg}deg)`;
+        }
+        
+        function advanceDate() {
+            currentDate.setDate(currentDate.getDate() + 1);
+            dayCounter++;
+            updateDateDisplay();
+        }
+        
+        function calculateDate() {
+            const dayInput = document.getElementById('dayInput');
+            const dayNumber = parseInt(dayInput.value);
+            
+            if (dayNumber >= 1) {
+                // Calculate date based on day number
+                const baseDate = new Date(2024, 10, 7); // November 7, 2024
+                const targetDate = new Date(baseDate);
+                targetDate.setDate(baseDate.getDate() + dayNumber - 1);
+                
+                // Update current date and day counter
+                currentDate = new Date(targetDate);
+                dayCounter = dayNumber;
+                updateDateDisplay();
+            } else {
+                alert('Please enter a valid day number (1 or higher)');
+            }
+        }
+        
+        function updateDateDisplay() {
+            const options = { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            document.getElementById('dateDisplay').textContent = currentDate.toLocaleDateString('en-US', options);
+            document.getElementById('dayCounter').textContent = `Day ${dayCounter}`;
+        }
+        
+        function buildClockTicks() {
+            const clock = document.getElementById('analogClock');
+            if (!clock) return;
+            // Avoid duplicates
+            if (clock.querySelector('.tick') || clock.querySelector('.dot')) return;
+            for (let i = 0; i < 60; i++) {
+                if (i % 5 === 0) {
+                    const tick = document.createElement('div');
+                    tick.className = 'tick major';
+                    tick.style.transform = `rotate(${i * 6}deg) translate(-50%, 0)`;
+                    clock.appendChild(tick);
+                } else {
+                    const dot = document.createElement('div');
+                    dot.className = 'dot';
+                    dot.style.transform = `rotate(${i * 6}deg) translate(-50%, 0)`;
+                    clock.appendChild(dot);
+                }
+            }
+        }
+
+        // Auto-start clock when page loads
+        window.onload = function() {
+            buildClockTicks();
+            updateAnalogClock();
+            startClock();
+        };
+    </script>
+</body>
+</html>
