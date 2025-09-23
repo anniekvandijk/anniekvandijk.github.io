@@ -320,7 +320,7 @@
         <!-- Date Section -->
         <div class="date-section">
             <h2>Date</h2>
-            <div class="date-display" id="dateDisplay">November 7, 2024</div>
+            <div class="date-display" id="dateDisplay">Saturday, November 7, 1993</div>
             <div class="day-counter" id="dayCounter">Day 1</div>
             <div class="button-group">
                 <button onclick="advanceDate()">Next Day</button>
@@ -344,7 +344,7 @@
         let lastRealTs = Date.now();
         
         // Date variables
-        let currentDate = new Date(2024, 10, 7); // November 7, 2024 (month is 0-indexed)
+        let currentDate = new Date(1993, 10, 7); // November 7, 1993 (month is 0-indexed)
         let dayCounter = 1;
         
         // Initialize display
@@ -452,7 +452,7 @@
             
             if (dayNumber >= 1) {
                 // Calculate date based on day number
-                const baseDate = new Date(2024, 10, 7); // November 7, 2024
+                const baseDate = new Date(1993, 10, 7); // November 7, 1993
                 const targetDate = new Date(baseDate);
                 targetDate.setDate(baseDate.getDate() + dayNumber - 1);
                 
@@ -467,8 +467,9 @@
         
         function updateDateDisplay() {
             const options = { 
-                month: 'long', 
-                day: 'numeric' 
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric'
             };
             document.getElementById('dateDisplay').textContent = currentDate.toLocaleDateString('en-US', options);
             document.getElementById('dayCounter').textContent = `Day ${dayCounter}`;
